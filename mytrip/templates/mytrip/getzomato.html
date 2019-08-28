@@ -1,0 +1,127 @@
+{% extends 'mytrip/base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    #table-wrapper {
+  position:relative;
+    }
+    #table-scroll {
+      height:500px;
+      overflow:auto;
+      margin-top:20px;
+    }
+    #table-wrapper table {
+      width:100%;
+
+    }
+    #table-wrapper table * {
+      background:white;
+      color:black;
+    }
+    #table-wrapper table thead th .text {
+      position:absolute;
+      top:-20px;
+      z-index:2;
+      height:20px;
+      width:35%;
+      border:1px solid red;
+    }
+        .date{
+        width:200px;
+    }
+    .myForm {
+font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+font-size: 1em;
+padding: 0.5em;
+border: 1px solid #ccc;
+border-radius: 3px;
+}
+
+.myForm * {
+box-sizing: border-box;
+}
+
+.myForm input {
+border: 1px solid #ccc;
+border-radius: 3px;
+font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+font-size: 0.5em;
+padding: 0.5em;
+}
+
+</style>
+ <br>
+    <br>
+  <div class="container">
+    <h1>Search for places to eat</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <br>
+            <div class="col-md-1"></div>
+
+            <div class="col-md-3">
+                <h4><strong>Search with Keyword </strong></h4>
+                {{form.searchkeyword}}
+        </div>
+        <!--</div>-->
+<!--<div class="row">-->
+    <!--<br>-->
+            <!--<div class="col-md-1"></div>-->
+		<div class="col-md-3">
+            <h4><strong>Cuisines</strong></h4>
+            {{form.cuisines}}
+        </div>
+<!--</div>-->
+
+        <!--<div class="row">-->
+            <!--<br>-->
+            <!--<div class="col-md-1"></div>-->
+            <div class="col-md-4">
+                <h4><strong>Location</strong></h4>
+                {{form.citiesList}}
+        </div>
+        <!--</div>-->
+        </div>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                <br>
+                <br>
+                <input type="submit" class="btn btn-login" style="width: 150px; height: 45px" name="Search" value="Search">
+            </div>
+            </div>
+            <br>
+            <br>
+
+       <p style="color: red"> {{error}}</p>
+    </form>
+      <br>
+         {%if th == 'th'%}
+<div id="table-wrapper">
+          <div id="table-scroll">
+  <table class="table" style="background-color: white">
+      <thead>
+      <th>Name</th>
+      <th>Timings</th>
+      <th>Avg. Price for 2</th>
+      <th>Location Address</th>
+      <th>Review Ratings</th>
+      </thead>
+    {% for eachResturant in data.restaurants %}
+      <tbody>
+      <td>{{eachResturant.restaurant.name}}</td>
+      <td>{{eachResturant.restaurant.timings}}</td>
+      <td>{{eachResturant.restaurant.average_cost_for_two}}</td>
+      <td>{{eachResturant.restaurant.location.address}}</td>
+      <td>{{eachResturant.restaurant.user_rating.aggregate_rating}}</td>
+      </tbody>
+    {% endfor %}
+  </table>
+          </div>
+</div>
+      <br>
+      {%endif%}
+</div>
+{% endblock %}

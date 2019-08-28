@@ -1,0 +1,186 @@
+{% extends 'mytrip/base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    #table-wrapper {
+  position:relative;
+    }
+    #table-scroll {
+      height:500px;
+      overflow:auto;
+      margin-top:20px;
+    }
+    #table-wrapper table {
+      width:100%;
+
+    }
+    #table-wrapper table * {
+      background:white;
+      color:black;
+    }
+    #table-wrapper table thead th .text {
+      position:absolute;
+      top:-20px;
+      z-index:2;
+      height:20px;
+      width:35%;
+      border:1px solid red;
+    }
+
+    .date{
+        width:200px;
+    }
+    .myForm {
+font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+font-size: 1em;
+padding: 0.5em;
+border: 1px solid #ccc;
+border-radius: 3px;
+}
+
+.myForm * {
+box-sizing: border-box;
+}
+
+.myForm input {
+border: 1px solid #ccc;
+border-radius: 3px;
+font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+font-size: 0.5em;
+padding: 0.5em;
+}
+
+</style>
+     <br>
+    <br>
+<div class="container">
+    <div class="row">
+
+	<form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <br>
+            <div class="col-md-1"></div>
+
+            <div class="col-md-5">
+                <h4><strong>Origin</strong></h4>
+                {{form.originplace}}
+        </div>
+
+		<div class="col-md-5">
+            <h4><strong>Destination</strong></h4>
+            {{form.destinationplace}}
+        </div>
+        </div>
+        <div class="row">
+            <br>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">
+                <h4><strong>Start Date</strong></h4>
+                {{form.outboundpartialdate}}
+        </div>
+
+		<div class="col-md-3">
+            <h4><strong>Return Date</strong></h4>
+            {{form.inboundpartialdate}}
+        </div>
+            <div class="col-md-3">
+                <br>
+                <br>
+                <input type="submit" class="btn btn-login" style="width: 150px; height: 45px" name="Search" value="Search">
+            </div>
+        </div>
+            <br>
+            <br>
+
+
+
+	</form>
+
+            {%if msg == 'msg'%}
+
+            <div class="card" style="background: white">
+            <br>
+                <h4 class="text-center" style="color: red"> {{message}}</h4>
+                <h4 class="text-center" style="color: red">{{error}}</h4>
+                <br>
+            </div>
+                  {%endif%}
+</div>
+<div class="row">
+{%if th == 'th'%}
+    <h2 class="text-center"> {{header}}</h2>
+<div id="table-wrapperF">
+          <div id="table-scrollF">
+    <table class="table" style="background-color: white"  border="1">
+        <thead>
+        <th>Out Airlines</th>
+        <th>Origin Airport</th>
+        <th>In Airlines</th>
+        <th>Destination Airport</th>
+        <th>Start Date</th>
+        <th>Return Date</th>
+        <th>Price</th>
+        <th>SMS</th>
+        </thead>
+        {% for airline_data in flights_data %}
+        <tbody>
+        <td>
+            {% for carriers in airline_data.carrier%}
+        {% for outcarriers in airline_data.outcarrier%}
+            {% if carriers.CarrierId == outcarriers %}
+                {{carriers.Name}}
+
+            {%endif%}
+            {%endfor%}
+        {%endfor%}
+        </td>
+
+
+        <td>{{ airline_data.origin }} - {{airline_data.airportorigin}}</td>
+        <td>
+            {% for carriers in airline_data.carrier%}
+        {% for incarriers in airline_data.incarrier%}
+            {% if carriers.CarrierId == incarriers %}
+                {{carriers.Name}}
+
+            {%endif%}
+            {%endfor%}
+        {%endfor%}
+        </td>
+
+        <td> {{airline_data.destination}} - {{airline_data.airportdest}}</td>
+        <td>{{airline_data.startdate}}</td>
+        <td>{{airline_data.returndate }}</td>
+        <td>{{airline_data.symbol}}{{airline_data.price}}</td>
+        <td><form method="POST">
+            <h6><strong>Phone Number to get a text</strong></h6>
+                    {% csrf_token %}
+                {{ smsform.phone }}
+                <input type="text" style="display: none" name="body" class="myForm" value="{{ origin }} to {{ destination }} Dates: ({{airline_data.startdate}} and {{airline_data.returndate }}),-${{airline_data.price}} ">
+            <input type="submit" class="btn btn-login" style="width: 150px; height: 45px" name="Search" value="Send SMS"></form></td>
+        </tbody>
+        {% endfor %}
+    </table>
+          </div>
+</div>
+{% endif %}
+{#<form method="POST">#}
+{#                <div class="col-md-3">#}
+{#               <h4><strong>Phone Number to get a text</strong></h4>#}
+{#                    {% csrf_token %}#}
+{#                {{ smsform.phone }}#}
+{#                <input type="text" name="body" class="myForm" value="{{ airline_data.origin}} to {{airline_data.destination }} - {{ airline_data.startdate }} and {{airline_data.returndate }}-${{airline_data.price}} ">#}
+{#<input type="submit" class="btn btn-login" style="width: 150px; height: 45px" name="Search" value="Send SMS">#}
+{#            </div>#}
+{#</form>#}
+
+
+
+
+</div>
+</div>
+</div>
+</div>
+{% endblock %}
